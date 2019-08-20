@@ -1,0 +1,6 @@
+{
+  "projects": {
+	"staging": $FIREBASE_PROJECT
+    "default": "playricochetrobots"
+  }
+}
