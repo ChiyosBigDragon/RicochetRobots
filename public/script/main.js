@@ -175,6 +175,14 @@ function colorChange(imageData, color) {
 	const b = parseInt(color.substring(5, 7), 16);
 	for(let i = 0; i < w; ++i) {
 		for(let j = 0; j < h; ++j) {
+			// 白抜き
+			// if(imageData.data[(i * w + j) * 4 + 0] == 255) {
+			// 	if(imageData.data[(i * w + j) * 4 + 1] == 255) {
+			// 		if(imageData.data[(i * w + j) * 4 + 2] == 255) {
+			// 			continue;
+			// 		}		
+			// 	}	
+			// }
 			imageData.data[(i * w + j) * 4 + 0] = r;
 			imageData.data[(i * w + j) * 4 + 1] = g;
 			imageData.data[(i * w + j) * 4 + 2] = b;
