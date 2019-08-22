@@ -232,19 +232,22 @@ function RobotConstructor(y, x, color, context) {
 		const dx = [1, 0, -1, 0];
 		const dy = [0, 1, 0, -1];
 		let moveResult = false;
+		let px = this.x, py = this.y;
 		while(true) {
-			const nx = this.x + dx[dir];
-			const ny = this.y + dy[dir];
+			const nx = px + dx[dir];
+			const ny = py + dy[dir];
 			if(ny < 0 || N <= ny) break;
 			if(nx < 0 || N <= nx) break;
 			if(!board[ny][nx]) break;
 			if(dir == 0 && wallY[ny][nx]) break;
 			if(dir == 1 && wallX[ny][nx]) break;
-			if(dir == 2 && wallY[this.y][this.x]) break;
-			if(dir == 3 && wallX[this.y][this.x]) break;
-			this.moveOnce(ny, nx);
+			if(dir == 2 && wallY[py][px]) break;
+			if(dir == 3 && wallX[py][px]) break;
+			px = nx, py = ny;
+			// this.moveOnce(ny, nx);
 			moveResult = true;
 		}
+		if(moveResult) this.moveOnce(py, px);
 		return moveResult;
 	};
 	this.select = function() {
@@ -554,6 +557,10 @@ function KeyUpFunc(e) {
 	if(49 <= code && code <= 52) {
 		change(code - 49);
 	}
+	// テンキー
+	if(97 <= code && code <= 100) {
+		change(code - 97);
+	}
 	// 移動
 	// 右(→, D)
 	if(code == 39 || code == 68) {
@@ -576,7 +583,7 @@ function KeyUpFunc(e) {
 		submit();
 	}
 	// 削除(5)
-	if(code == 53) {
+	if(code == 53 || code == 101) {
 		countDecrement();
 	}
 	// ゴール変更(Space)
