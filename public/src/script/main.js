@@ -169,7 +169,7 @@ function drawWall() {
 (function rankInit() {
 	const canvas = document.getElementById('rank');
 	const context = canvas.getContext('2d');
-	context.font = "32px jsrf";
+	context.font = "32px Oxanium";
 	context.fillText('Score board, here', 0, 288, 320);
 	// context.fillText('ちよたいりゅうひでまさ：2pt', 0, 32, 320);
 	// context.fillText('あきせやまみつひこ：1pt', 0, 64, 320);
@@ -193,7 +193,7 @@ function colorChange(imageData, color) {
 // コンストラクタ
 function RobotConstructor(y, x, color, context) {
 	this.img = new Image();
-	this.img.src = '/images/android.png';
+	this.img.src = './src/images/android.png';
 	this.context = context;
 	this.startX = x;
 	this.startY = y;
@@ -273,7 +273,7 @@ let Robot = [];
 	Robot[3] = new RobotConstructor(N - 1, 0, ROBOT_COLOR[3], context);
 	// ゴール
 	Robot[4] = new RobotConstructor(N - 1, 0, ROBOT_COLOR[4], document.getElementById('goal').getContext('2d'));
-	Robot[4].img.src = '/images/android_goal.png';
+	Robot[4].img.src = './src/images/android_goal.png';
 })();
 
 function goalInit() {
@@ -338,9 +338,9 @@ function count() {
 	const canvas = document.getElementById('count');
 	const context = canvas.getContext('2d');
 	context.fillStyle = 'white';
-	context.font = "36px jsrf";
+	context.font = "64px Oxanium";
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	context.fillText(cnt.toString().padStart(2, "0"), BOARD_SIZE / 2 - GRID_SIZE * 0.86, BOARD_SIZE / 2 + GRID_SIZE * 0.4);
+	context.fillText(cnt.toString().padStart(2, "0"), BOARD_SIZE / 2 - GRID_SIZE * 0.89, BOARD_SIZE / 2 + GRID_SIZE * 0.55, 72);
 	console.log(cnt);
 }
 
@@ -455,7 +455,7 @@ function commandMoveChange(x4, y4) {
 	const Robot = k * 0.6;
 	const miniRobot = k * 0.2;
 	const img = new Image();
-	img.src = '/images/android.png';
+	img.src = './src/images/android.png';
 	img.onload = function() {
 		context.drawImage(img, 0, k * 0.1, miniRobot, miniRobot);
 		let imageData = context.getImageData(0, k * 0.1, miniRobot, miniRobot);
@@ -571,10 +571,10 @@ function KeyUpFunc(e) {
 	if(code == 38 || code == 87) {
 		commandAdd(3);
 	}
-	// 送信(Enter)
-	if(code == 13) {
-		submit();
-	}
+	// // 送信(Enter)
+	// if(code == 13) {
+	// 	submit();
+	// }
 	// 削除(5)
 	if(code == 53) {
 		countDecrement();

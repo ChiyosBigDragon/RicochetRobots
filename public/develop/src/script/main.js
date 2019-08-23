@@ -169,7 +169,7 @@ function drawWall() {
 (function rankInit() {
 	const canvas = document.getElementById('rank');
 	const context = canvas.getContext('2d');
-	context.font = "32px jsrf";
+	context.font = "32px Oxanium";
 	context.fillText('Score board, here', 0, 288, 320);
 	// context.fillText('ちよたいりゅうひでまさ：2pt', 0, 32, 320);
 	// context.fillText('あきせやまみつひこ：1pt', 0, 64, 320);
@@ -338,9 +338,9 @@ function count() {
 	const canvas = document.getElementById('count');
 	const context = canvas.getContext('2d');
 	context.fillStyle = 'white';
-	context.font = "36px jsrf";
+	context.font = "64px Oxanium";
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	context.fillText(cnt.toString().padStart(2, "0"), BOARD_SIZE / 2 - GRID_SIZE * 0.86, BOARD_SIZE / 2 + GRID_SIZE * 0.4, 72);
+	context.fillText(cnt.toString().padStart(2, "0"), BOARD_SIZE / 2 - GRID_SIZE * 0.89, BOARD_SIZE / 2 + GRID_SIZE * 0.55, 72);
 	console.log(cnt);
 }
 
