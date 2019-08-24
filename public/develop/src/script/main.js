@@ -15,8 +15,11 @@ const ROBOT_COLOR = ['#ff1744', '#2ecc71', '#3498db', '#FFB900', '#D500F9'];
 
 // board[y][x] := (y, x)にオブジェクト
 let board;
+// goal := ゴールの配置列
+let goal;
+
 // ボード初期化
-(function boardInit() {
+function boardInit() {
 	board = new Array(N);
 	for(let i = 0; i < N; ++i) {
 		board[i] = new Array(N);
@@ -29,79 +32,10 @@ let board;
 	board[7][8] = false;
 	board[8][7] = false;
 	board[8][8] = false;
-})();
+};
 
 // wall(X|Y)[y][x] := (y, x)から(X|Y)方向に壁
 let wallX, wallY;
-// 壁初期化
-(function wallInit() {
-	wallX = new Array(N + 1);
-	wallY = new Array(N + 1);
-	for(let i = 0; i <= N; ++i) {
-		wallX[i] = new Array(N + 1);
-		wallY[i] = new Array(N + 1);
-	}
-	// 外周
-	for(let i = 0; i <= N; ++i) {
-		wallY[i][0] = true;
-		wallY[i][N] = true;
-		wallX[0][i] = true;
-		wallX[N][i] = true;
-	}
-	// 中央
-	wallX[7][7] = true;
-	wallX[7][8] = true;
-	wallX[9][7] = true;
-	wallX[9][8] = true;
-	wallY[7][7] = true;
-	wallY[8][7] = true;
-	wallY[7][9] = true;
-	wallY[8][9] = true;
-	// 固有X
-	wallX[1][11] = true;
-	wallX[2][5] = true;
-	wallX[2][15] = true;
-	wallX[3][7] = true;
-	wallX[3][14] = true;
-	wallX[4][0] = true;
-	wallX[5][3] = true;
-	wallX[5][6] = true;
-	wallX[5][9] = true;
-	wallX[6][1] = true;
-	wallX[7][12] = true;
-	wallX[9][12] = true;
-	wallX[10][0] = true;
-	wallX[10][15] = true;
-	wallX[11][3] = true;
-	wallX[11][5] = true;
-	wallX[11][10] = true;
-	wallX[12][14] = true;
-	wallX[13][2] = true;
-	wallX[13][4] = true;
-	wallX[15][11] = true;	
-	// 固有Y
-	wallY[0][3] = true;
-	wallY[0][9] = true;
-	wallY[1][5] = true;
-	wallY[1][11] = true;
-	wallY[2][8] = true;
-	wallY[3][15] = true;
-	wallY[4][4] = true;
-	wallY[4][10] = true;
-	wallY[5][6] = true;
-	wallY[6][2] = true;
-	wallY[6][12] = true;
-	wallY[9][12] = true;
-	wallY[10][4] = true;
-	wallY[10][11] = true;
-	wallY[11][6] = true;
-	wallY[12][2] = true;
-	wallY[12][15] = true;
-	wallY[13][4] = true;
-	wallY[14][11] = true;
-	wallY[15][4] = true;
-	wallY[15][14] = true;
-})();
 
 // グリッド描画
 function drawGrid() {
@@ -128,6 +62,7 @@ function drawGrid() {
 function drawWall() {
 	const canvas = document.getElementById('wall');
 	const context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	// 壁描画
 	context.strokeStyle = '#546E7A';
 	context.lineWidth = 6;
@@ -160,16 +95,33 @@ function drawWall() {
 }
 
 // 背景描画
-(function drawBackground() {
+function drawBackground() {
 	drawGrid();
 	drawWall();
-})();
+};
+
+// 壁とゴール読み込み
+function gameInit() {
+	const id = document.getElementById('stage').value.toString().padStart(3, '0');
+	boardInit();
+	const httpObj = new XMLHttpRequest();
+	httpObj.open('get', './src/stage/' + id + '.json', true);
+	httpObj.onload = function() {
+		const data = JSON.parse(this.responseText);
+		wallX = data['wall']['x'];
+		wallY = data['wall']['y'];
+		goal = data['goal'];
+		drawBackground();
+	}
+	httpObj.send(null);
+}
+gameInit();
 
 // 順位表描画
 (function rankInit() {
 	const canvas = document.getElementById('rank');
 	const context = canvas.getContext('2d');
-	context.font = "32px Oxanium";
+	context.font = "48px Oxanium";
 	context.fillText('Score board, here', 0, 288, 320);
 	// context.fillText('ちよたいりゅうひでまさ：2pt', 0, 32, 320);
 	// context.fillText('あきせやまみつひこ：1pt', 0, 64, 320);
@@ -232,19 +184,22 @@ function RobotConstructor(y, x, color, context) {
 		const dx = [1, 0, -1, 0];
 		const dy = [0, 1, 0, -1];
 		let moveResult = false;
+		let px = this.x, py = this.y;
 		while(true) {
-			const nx = this.x + dx[dir];
-			const ny = this.y + dy[dir];
+			const nx = px + dx[dir];
+			const ny = py + dy[dir];
 			if(ny < 0 || N <= ny) break;
 			if(nx < 0 || N <= nx) break;
 			if(!board[ny][nx]) break;
 			if(dir == 0 && wallY[ny][nx]) break;
 			if(dir == 1 && wallX[ny][nx]) break;
-			if(dir == 2 && wallY[this.y][this.x]) break;
-			if(dir == 3 && wallX[this.y][this.x]) break;
-			this.moveOnce(ny, nx);
+			if(dir == 2 && wallY[py][px]) break;
+			if(dir == 3 && wallX[py][px]) break;
+			px = nx, py = ny;
+			// this.moveOnce(ny, nx);
 			moveResult = true;
 		}
+		if(moveResult) this.moveOnce(py, px);
 		return moveResult;
 	};
 	this.select = function() {
@@ -282,23 +237,16 @@ function goalInit() {
 		Robot[i].moveStart(Robot[i].y, Robot[i].x);
 	}
 	commandReset();
-	const goal = [{x: 5, y: 1}, {x: 11, y: 1}, {x: 7, y: 2}, {x: 14, y: 3}, {x: 3, y: 4}, {x: 9, y: 4}, {x: 6, y: 5}, {x: 1, y: 6}, {x: 12, y: 6}, {x: 12, y: 9}, {x: 3, y: 10}, {x: 10, y: 10}, {x: 5, y: 11}, {x: 2, y: 12}, {x: 14, y: 12}, {x: 4, y: 13}, {x: 11, y: 14}];
 	// ゴール
 	while(true) {
 		let m = goal[Math.floor(Math.random() * goal.length)];
 		let y = m.y;
 		let x = m.x;
-		// let y = Math.floor(Math.random() * N);
-		// let x = Math.floor(Math.random() * N);
 		if(board[y][x]) {
 			const color = Math.floor(Math.random() * ROBOT_NUM);
 			Robot[ROBOT_NUM].color = ROBOT_COLOR[color];
 			Robot[ROBOT_NUM].moveStart(y, x);
 			board[y][x] = true;
-			// const canvas = document.getElementById('rank');
-			// const context = canvas.getContext('2d');
-			// context.fillStyle = ROBOT_COLOR[color];
-			// context.fillRect(0, 0, canvas.width, canvas.height);
 			break;
 		}
 	}
@@ -549,10 +497,14 @@ function commandMoveChange(x4, y4) {
 
 function KeyUpFunc(e) {
 	const code = e.keyCode;
-	console.log(code);
+	// console.log(code);
 	// ロボット選択(1 - 4)
 	if(49 <= code && code <= 52) {
 		change(code - 49);
+	}
+	// テンキー
+	if(97 <= code && code <= 100) {
+		change(code - 97);
 	}
 	// 移動
 	// 右(→, D)
@@ -576,11 +528,11 @@ function KeyUpFunc(e) {
 		submit();
 	}
 	// 削除(5)
-	if(code == 53) {
+	if(code == 53 || code == 101) {
 		countDecrement();
 	}
-	// ゴール変更(Space)
-	if(code == 32) {
+	// ゴール変更(C)
+	if(code == 67) {
 		goalInit();
 	}
 	// リセット(R)

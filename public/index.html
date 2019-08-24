@@ -59,6 +59,9 @@
 				width: 960px;
 				left: 20;
 			}
+			#stage {
+				width: 60px;
+			}
 			#number {
 				width: 60px;
 			}
@@ -89,10 +92,17 @@
 			</div>
 		</div>
 		<div id='button'>
+			<div>
+				0~2が指定できます．
+			</div>
+			<div>
+				<input id='stage' type='number' value='0' min='0' max='2' step='1'>
+				<button onclick="gameInit()">ステージ読み込み</button>
+			</div>
 			()内はキー
 			<div>
 				<button onclick="init()">init</button>
-				<button onclick="goalInit()">ゴール変更(Space)</button>
+				<button onclick="goalInit()">ゴール変更(C)</button>
 			</div>
 			<div>
 				<button onclick="commandReset()">手数リセット(R)</button>
@@ -101,9 +111,9 @@
 			<!-- <div>
 				<button onclick="submit()">そうしん</button>
 			</div> -->
-			<div>
+			<!-- <div>
 				<script language="JavaScript" type="text/javascript" src="http://stopwatchtimer.pya.jp/timer_blogparts.js"></script>
-			</div>
+			</div> -->
 			<div>
 				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
 			</div>
