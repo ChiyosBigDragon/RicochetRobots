@@ -166,8 +166,8 @@ function RobotConstructor(y, x, color, context) {
 		board[this.y][this.x] = true;
 		this.x = x;
 		this.y = y;
-		board[y][x] = false;
-		this.draw();
+		board[this.y][this.x] = false;
+	 	this.draw();
 	};
 	this.draw = function() {
 		const k = GRID_SIZE * 0.9;
@@ -200,6 +200,8 @@ function RobotConstructor(y, x, color, context) {
 			moveResult = true;
 		}
 		if(moveResult) this.moveOnce(py, px);
+		if(!moveResult) console.log('うごけねー1' + ' ' + this.color + ' ' + dir);
+		if(!moveResult) console.log('うごけねー2' + ' ' + px + ' ' + py);
 		return moveResult;
 	};
 	this.select = function() {
@@ -277,6 +279,7 @@ function commandReset() {
 function resetBoard() {
 	for(let i = 0; i < ROBOT_NUM; ++i) {
 		Robot[i].moveOnce(Robot[i].startY, Robot[i].startX);
+		console.log(Robot[i].startY + ' ' + Robot[i].startX);
 	}
 	if(nowRobot != -1) Robot[nowRobot].select();
 }
@@ -308,6 +311,11 @@ function commandMove() {
 	const dir = {'d': 0, 's': 1, 'a': 2, 'w': 3};
 	for(let i = 0; i < n; i += 2) {
 		Robot[str[i]].move(dir[str[i + 1]]);
+		console.log(board);
+		// console.log((i / 2 + 1) + ' 回目のムーブ');
+		// for(let j = 0; j < 4; ++j) {
+		// 	console.log(j + ' ' + Robot[j].x + ' ' + Robot[j].y);
+		// }
 	}
 	Robot[nowRobot].select();
 	count();
@@ -541,3 +549,32 @@ function KeyUpFunc(e) {
 	}
 }
 document.addEventListener("keyup", KeyUpFunc);
+
+async function debug() {
+	boardInit();
+	console.log('初期位置');
+	console.log(board);
+	await Robot[0].moveStart(1, N - 1);
+	console.log(board);
+	await Robot[1].moveStart(12, 6);
+	console.log(board);
+	await Robot[2].moveStart(0, 10);
+	console.log(board);
+	await Robot[3].moveStart(0, 3);
+	console.log(board);
+	console.log('初期位置おわり');
+	// Robot[0].moveOnce(1, N - 1);
+	// Robot[1].moveOnce(12, 6);
+	// Robot[2].moveOnce(0, 10);
+	// Robot[3].moveOnce(0, 3);
+	goalInit();
+	nowRobot = 0;
+	// str = '1w1d1w1a1w1a1s1a1w1a1s';
+	str = '1w1d1w1a1w1a1s1a1w1a1s0a2s2a0s0w0d0w0a0s0a0s0a0w0s2w2a2w2s2a2w2d2w2a2w2a2w3d';
+	commandMove();
+	// for(let j = 0; j < 4; ++j) console.log(Robot[j].x + " " + Robot[j].y);
+	// console.log(board);
+	// commandAdd(0);
+	// for(let j = 0; j < 4; ++j) console.log(Robot[j].x + " " + Robot[j].y);
+	// console.log(board);
+}
