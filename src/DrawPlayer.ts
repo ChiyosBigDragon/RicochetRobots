@@ -29,8 +29,8 @@ export default class Player {
 			this.context.fillStyle = 'black';
 			if(rank[i] == 1) this.context.fillStyle = 'gold';
 			if(rank[i] == 2) this.context.fillStyle = 'silver';
-			if(rank[i] == 3) this.context.fillStyle = 'bronze';
-			this.context.fillText(numeral(rank[i]).format('0o'), 0, (i + 1) * this.HEIGHT);
+			if(rank[i] == 3) this.context.fillStyle = 'chocolate';
+			this.context.fillText(numeral(rank[i]).format('0o'), 0, (i + 1) * this.HEIGHT, this.HEIGHT);
 		}
 	};
 	public drawPoint = (point: number[]) => {

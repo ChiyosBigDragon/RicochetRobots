@@ -50,7 +50,7 @@ db.ref(PATH + 'player/token').on('value', (res) => {
 });
 
 db.ref(PATH + 'player/rank').on('value', (res) => {
-	Player.drawPlayerNow(res.val());
+	Player.drawRank(res.val());
 });
 
 db.ref(PATH + 'player/now').on('value', (res) => {
