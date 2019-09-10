@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>PlayCamelUp</title>
+		<!-- firebase -->
+		<script defer src="/__/firebase/6.4.0/firebase-app.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-auth.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-database.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-messaging.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-storage.js"></script>
+		<script defer src="/__/firebase/init.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+		<style>
+			body {
+				background: #ffffff;
+			}
+			#baseCanvas {
+				border: thin inset #aaaaaa;
+			}
+			#base {
+				position: relative;
+				width: 1080px;
+				margin: 30px auto;
+			}
+			#base canvas {
+				position: absolute;
+			}
+			#base #dice {
+				top: 320px;
+			}
+			#base #announce {
+				top: 380px;
+			}
+			#base #player {
+				top: 450px;
+			}
+			#base #grid {
+				background: rgba(149, 165, 166, 0.1);
+			}
+			#base #board canvas {
+				left: 0;
+			}
+			#base #side canvas {
+				right: 0;
+			}
+			#base #side #rank {
+				top: 0;
+			}
+			#base #side #command {
+				top: 320px;
+			}
+			#base #side #commandMask {
+				top: 320px;
+			}
+			.Canvas {
+				position: relative;
+				margin: auto;
+			}
+			.Canvas canvas {
+				position: absolute;
+				left: 0;
+				right: 0;
+				margin: 30px auto;
+			}
+			#button {
+				width: 960px;
+				left: 20;
+			}
+			#stage {
+				width: 60px;
+			}
+			#number {
+				width: 60px;
+			}
+			@font-face {
+				/* Thank you */
+				/* https://sev.dev/fonts/oxanium/ */
+				font-family: 'Oxanium';
+				src: url('./src/font/Oxanium-SemiBold.ttf') format('truetype');
+			}
+		</style>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLYN70ZWRG"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-JLYN70ZWRG');
+		</script> -->
+	</head>
+	<body>
+		<div id='base'>
+			<canvas id='baseCanvas' width='1080' height='720' style='border: thin inset #aaaaaa;'>Canvas not supported</canvas>
+			<div id='board'>
+				<canvas id='grid' width='1080' height='720'></canvas>
+				<canvas id='camel0' width='1080' height='720'></canvas>
+				<canvas id='camel1' width='1080' height='720'></canvas>
+				<canvas id='camel2' width='1080' height='720'></canvas>
+				<canvas id='camel3' width='1080' height='720'></canvas>
+				<canvas id='camel4' width='1080' height='720'></canvas>
+				<canvas id='dice' width='1080' height='60'></canvas>
+				<canvas id='announce' width='1080' height='340'></canvas>
+				<canvas id='player' width='1080' height='270'></canvas>
+			</div>
+			<!-- <div id='side'>
+				<canvas id='rank' width='320' height='320'></canvas>
+				<canvas id='command' width='320' height='320'></canvas>
+				<canvas id='commandMask' width='320' height='320'></canvas>
+			</div> -->
+		</div>
+		<div id='button'>
+			<div>
+				<input id='playerNum' type='number' value='5' min='1' max='10' step='1'>
+				<button id='Start'>Start</button>
+			</div>
+			<div>
+				<input id='player0' type='text'></input>
+			</div>
+			<div>
+				<input id='player1' type='text'></input>
+			</div>
+			<div>
+				<input id='player2' type='text'></input>
+			</div>
+			<div>
+				<input id='player3' type='text'></input>
+			</div>
+			<div>
+				<input id='player4' type='text'></input>
+			</div>
+			<div>
+				<input id='player5' type='text'></input>
+			</div>
+			<div>
+				<input id='player6' type='text'></input>
+			</div>
+			<div>
+				<input id='player7' type='text'></input>
+			</div>
+			<div>
+				<input id='player8' type='text'></input>
+			</div>
+			<div>
+				<input id='player9' type='text'></input>
+			</div>
+			<div>
+				<button id='DiceRoll'>Dice</button>
+			</div>
+			<div>
+				<button id='Bet'>Bet</button>
+				<form>
+					<input name='BetColor' type='radio' value='0' checked="checked"><label style='background-color: #00569b; color: #ffffff;'>B</label>
+					<input name='BetColor' type='radio' value='1'><label style='background-color: #39b20d; color: #ffffff;'>G</label>
+					<input name='BetColor' type='radio' value='2'><label style='background-color: #f56300; color: #ffffff;'>O</label>
+					<input name='BetColor' type='radio' value='3'><label style='background-color: #ffffff; color: #000000;'>W</label>
+					<input name='BetColor' type='radio' value='4'><label style='background-color: #ffd302; color: #000000;'>Y</label>
+				</form>
+			</div>
+			<div>
+				<button id='PanelSet'>Set</button>
+				<input id='PanelSetX' type='number' value='2' min='2' max='16' step='1'>
+				<form>
+					<input name='PanelSetDetail' type='radio' value='0' checked="checked">Oasis
+					<input name='PanelSetDetail' type='radio' value='1'>Mirage
+				</form>
+			</div>
+			<div>
+				<button id='FinalBet'>FinalBet</button>
+				<form>
+					<input name='FinalBetDetail' type='radio' value='0' checked="checked">Top
+					<input name='FinalBetDetail' type='radio' value='1'>Last
+				</form>
+				<form>
+					<input name='FinalBetColor' type='radio' value='0' checked="checked"><label style='background-color: #00569b; color: #ffffff;'>B</label>
+					<input name='FinalBetColor' type='radio' value='1'><label style='background-color: #39b20d; color: #ffffff;'>G</label>
+					<input name='FinalBetColor' type='radio' value='2'><label style='background-color: #f56300; color: #ffffff;'>O</label>
+					<input name='FinalBetColor' type='radio' value='3'><label style='background-color: #ffffff; color: #000000;'>W</label>
+					<input name='FinalBetColor' type='radio' value='4'><label style='background-color: #ffd302; color: #000000;'>Y</label>
+				</form>
+			</div>
+		</div>	
+		<script defer="" src='./src/script/Controller.main.js'></script>
+	</body>
+</html>
