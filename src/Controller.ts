@@ -38,6 +38,7 @@ db.ref(PATH + 'announce').on('value', (res) => {
 });
 
 db.ref(PATH + 'player/name').on('value', (res) => {
+	Grid.nameChange(res.val());
 	Player.drawName(res.val());
 });
 
@@ -65,7 +66,6 @@ document.getElementById('Start').onclick = () => {
 		const eplayer = <HTMLInputElement> document.getElementById('player' + i.toString());
 		PLAYER_NAME[i] = eplayer.value;
 	}
-	Grid.nameChange(PLAYER_NAME);
 	Game.start(PLAYER_NAME);
 }
 

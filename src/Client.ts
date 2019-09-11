@@ -36,6 +36,7 @@ db.ref(PATH + 'announce').on('value', (res) => {
 });
 
 db.ref(PATH + 'player/name').on('value', (res) => {
+	Grid.nameChange(res.val());
 	Player.drawName(res.val());
 });
 
