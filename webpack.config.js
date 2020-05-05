@@ -3,18 +3,15 @@ const path = require('path');
 module.exports = {
 	mode: 'development',
 	entry: {
-		'public/camel/src/script/Client': './src/Client.ts',
+		'public/camel-develop/src/script/Client': './src/camel/Client.ts',
 		'public/camel/controller/src/script/Controller': './src/Controller.ts',
+		'public/robot-develop/src/script/Client': './src/robot/Client.ts'
 	},
+	target: 'node',
 	output: {
 		path: __dirname,
-		filename: '[name].main.js',
+		filename: '[name].js',
 	},
-	// entry: './src/main.ts',
-	// output: {
-	// 	filename: 'main.js',
-	// 	path: path.join(__dirname, 'public/camel/src/script')
-	// },
 	module: {
 		rules: [
 			{
@@ -25,11 +22,16 @@ module.exports = {
 	},
 	resolve: {
 		extensions: [
-			'.ts'
-		]
+			'.ts',
+			'.js',
+			'json'
+		],
 	},
 	externals: {
 		firebase: 'firebase',
-		numeral: 'numeral'
+		'firebase-functions': 'firebase-functions',
+		'firebase-admin': 'firebase-admin',
+		numeral: 'numeral',
+		acgraph: 'acgraph'
 	}
 };
