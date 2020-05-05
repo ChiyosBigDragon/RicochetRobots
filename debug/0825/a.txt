@@ -1,0 +1,58 @@
+309 79.10000610351562
+main.js (384,3)
+
+ 2→1
+main.js (320,2)
+
+ select
+main.js (206,3)
+
+ 22 151.60000610351562
+main.js (384,3)
+
+ 1→3
+main.js (320,2)
+
+ select
+main.js (206,3)
+
+1w1d1w1a1w1a1s1a1w1a1s0a2s2a0s0w0d0w0a0s0a0s0a0w0s2w2a2w2s2a 2w2d2w2a2w2a2w3d
+main.js (348,2)
+
+2 select
+main.js (206,3)
+
+ 38
+main.js (292,2)
+
+2 select
+main.js (206,3)
+
+ 37
+main.js (292,2)
+
+ 35 146.60000610351562
+main.js (384,3)
+
+ 3→3
+main.js (320,2)
+
+ select
+main.js (206,3)
+
+ 1w1d1w1a1w1a1s1a1w1a1s0a2s2a0s0w0d0w0a0s0a0s0a0w0s2w2a2w2s2a 2w2d2w2a2w2a2w3d
+main.js (348,2)
+
+2 select
+main.js (206,3)
+
+ 38
+main.js (292,2)
+
+
+
+
+
+
+
+ 
