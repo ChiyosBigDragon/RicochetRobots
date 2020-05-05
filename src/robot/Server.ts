@@ -1,3 +1,178 @@
 import * as firebase from 'firebase';
 const db = firebase.database();
 const PATH = 'RicochetRobots/';
+
+export class Server {
+	private wallX;
+	private wallY;
+	constructor(private uid: string, private userName: string) {}
+	public select = (robot_id) => {
+		db.ref(PATH + 'select').set(robot_id);
+		return true;
+	};
+	private moveRecover = (robot, move) => {
+		const ROBOT_NUM = robot.length - 1;
+		const N = this.wallX.length - 1;
+		const dx = [1, 0, -1, 0];
+		const dy = [0, 1, 0, -1];
+		for(let i = 0; i < move.length; i += 2) {
+			const robot_id = Number(move[i]);
+			const dir = Number(move[i + 1]);
+			let px = robot[robot_id].x;
+			let py = robot[robot_id].y;
+			while(true) {
+				const nx = px + dx[dir];
+				const ny = py + dy[dir];
+				if(ny < 0 || N <= ny) break;
+				if(nx < 0 || N <= nx) break;
+				let robotExist = false;
+				for(let i = 0; i < ROBOT_NUM; ++i) {
+					if(i == robot_id) continue;
+					if(robot[i].x == nx && robot[i].y == ny) {
+						robotExist = true;
+					}
+				}
+				if(robotExist) break;
+				if(dir == 0 && this.wallY[ny][nx]) break;
+				if(dir == 1 && this.wallX[ny][nx]) break;
+				if(dir == 2 && this.wallY[py][px]) break;
+				if(dir == 3 && this.wallX[py][px]) break;
+				px = nx, py = ny;
+			}
+			robot[robot_id].x = px;
+			robot[robot_id].y = py;
+		}
+		return robot;
+	};
+	public move = (dir) => {
+		let robot_id = 0;
+		db.ref(PATH + 'select').once('value', (res) => {
+			robot_id = res.val();
+		});
+		db.ref(PATH + 'robot').once('value', async (res) => {
+			const robot = res.val();
+			const ROBOT_NUM = robot.length - 1;
+			const N = this.wallX.length - 1;
+			const dx = [1, 0, -1, 0];
+			const dy = [0, 1, 0, -1];
+			let px = robot[robot_id].x;
+			let py = robot[robot_id].y;
+			while(true) {
+				const nx = px + dx[dir];
+				const ny = py + dy[dir];
+				if(ny < 0 || N <= ny) break;
+				if(nx < 0 || N <= nx) break;
+				let robotExist = false;
+				for(let i = 0; i < ROBOT_NUM; ++i) {
+					if(i == robot_id) continue;
+					if(robot[i].x == nx && robot[i].y == ny) {
+						robotExist = true;
+					}
+				}
+				if(robotExist) break;
+				if(dir == 0 && this.wallY[ny][nx]) break;
+				if(dir == 1 && this.wallX[ny][nx]) break;
+				if(dir == 2 && this.wallY[py][px]) break;
+				if(dir == 3 && this.wallX[py][px]) break;
+				px = nx, py = ny;
+			}
+			if(robot[robot_id].x == px && robot[robot_id].y == py) {
+				return false;
+			}
+			robot[robot_id].x = px;
+			robot[robot_id].y = py;
+			let trueStep;
+			await db.ref(PATH + 'step').once('value', (stepSnapshot) => {
+				trueStep = stepSnapshot.val() + 1;
+				db.ref(PATH + 'step').set(trueStep);
+			});
+			await db.ref(PATH + 'moveStr').once('value', (moveSnapshot) => {
+				db.ref(PATH + 'moveStr').set(moveSnapshot.val() + String(robot_id) + String(dir));
+			});
+			await db.ref(PATH + 'robot').set(robot);
+			if(robot[robot_id].x == robot[ROBOT_NUM].x && robot[robot_id].y == robot[ROBOT_NUM].y) {
+				if(robot[ROBOT_NUM].id == ROBOT_NUM || robot_id == robot[ROBOT_NUM].id) {
+					let step = 0; 
+					await db.ref(PATH + 'vote/' + this.uid).once('value', (voteSnapshot) => {
+						step = voteSnapshot.val().step;
+					});
+					if(step <= trueStep) {
+						this.clear();
+					}
+				}
+			}
+			return true;
+		});
+	};
+	public wall = (wallX, wallY) => {
+		this.wallX = wallX;
+		this.wallY = wallY;
+	};
+	public reset = () => {
+		this.stepReset();
+		db.ref(PATH + 'baseRobot').once('value', (baseSnapshot) => {
+			db.ref(PATH + 'robot').set(baseSnapshot.val());
+		});
+	};
+	public removeOnce = () => {
+		db.ref(PATH + 'moveStr').once('value', (moveSnapshot) => {
+			let move = moveSnapshot.val();
+			if(move.length - 2 >= 0) db.ref(PATH + 'select').set(move[move.length - 2]);
+			move = move.slice(0, move.length - 2);
+			db.ref(PATH + 'moveStr').set(move);
+			db.ref(PATH + 'baseRobot').once('value', (baseSnapshot) => {
+				const robot = baseSnapshot.val();
+				db.ref(PATH + 'robot').set(this.moveRecover(robot, move));
+			});
+			db.ref(PATH + 'step').once('value', (stepSnapshot) => {
+				db.ref(PATH + 'step').set(Math.max(0, stepSnapshot.val() - 1));
+			});
+		});
+	};
+	private clear = () => {
+		db.ref(PATH + 'score/' + this.uid).once('value', (scoreSnapshot) => {
+			const obj = scoreSnapshot.val();
+			obj.pt += 1;
+			db.ref(PATH + 'score/' + this.uid).set(obj);
+		});
+		this.voteReset();
+		this.stepReset();
+		this.goalChange();
+	};
+	private voteReset = () => {
+		db.ref(PATH + 'vote/').set({});
+	};
+	private stepReset = () => {
+		db.ref(PATH + 'moveStr/').set("");
+		db.ref(PATH + 'step/').set(0);
+	};
+	private goalChange = () => {
+		db.ref(PATH + 'robot').once('value', async (res) => {
+			// スタート位置記憶
+			const robot = res.val();
+			const ROBOT_NUM = robot.length - 1;
+			// ゴール変更
+			db.ref(PATH + 'goal').once('value', async (res) => {
+				const goal = res.val();
+				while(true) {
+					const m = goal[Math.floor(Math.random() * goal.length)];
+					let find = true;
+					for(let i = 0; i < ROBOT_NUM; ++i) {
+						if(robot[i].x == m.x && robot[i].y == m.y) {
+							find = false;
+						}
+					}
+					if(find) {
+						const color = Math.floor(Math.random() * (ROBOT_NUM + 1));
+						robot[ROBOT_NUM].id = color;
+						robot[ROBOT_NUM].x = m.x;
+						robot[ROBOT_NUM].y = m.y;
+						break;
+					}
+				}
+				db.ref(PATH + 'robot').set(robot);
+				db.ref(PATH + 'baseRobot').set(robot);
+			});
+		});
+	};
+};

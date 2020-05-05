@@ -145,7 +145,7 @@ export default class Server {
 		await Sleep(2000);
 		let pointDiff: number[] = new Array(this.PLAYER_NUM);
 		for(let i = 0; i < this.PLAYER_NUM; ++i) {
-			// const pre = this.playerPoint[i];
+			const pre = this.playerPoint[i];
 			pointDiff[i] = 0;
 			while(this.playerCamel[i].length) {
 				const {color, pt} = this.playerCamel[i].shift();

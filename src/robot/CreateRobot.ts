@@ -1,9 +1,16 @@
 export class CreateRobot {
 	private layer;
+	private robotLayer;
+	private backLayer;
 	constructor(public id: number, private color: string, private WIDTH, private HEIGHT, private stage) {
 		this.layer = stage.layer();
-		this.layer.zIndex(5);
-		const colorLayer = this.layer.layer();
+		// 背景
+		this.backLayer = this.layer.rect(-180, -80, 360, 360);
+		this.backLayer.stroke("#D500F9");
+		this.backLayer.strokeThickness(20);
+		// ロボット本体
+		this.robotLayer = this.layer.layer();
+		const colorLayer = this.robotLayer.layer();
 		const bb = colorLayer.layer();
 		bb.attr("stroke-width", "14.4");
 		bb.ellipse(0, 41, 91, 84).fill(color).attr("stroke", "#FFF");
@@ -28,23 +35,33 @@ export class CreateRobot {
 		c.path().attr("d", "m-95 44.5h190").attr("stroke", "#FFF");
 		c.circle(-42, 0, 4).attr("stroke", "#FFF");
 		c.circle(42, 0, 4).attr("stroke", "#FFF");
+		// ID
 		const textLayer = this.layer.text();
-		textLayer.zIndex(6);
 		textLayer.text(id.toString());
 		textLayer.fontSize(180);
 		textLayer.setPosition(-55, 10);
 		textLayer.color("black");
+		// 設定
 		this.setHeight(HEIGHT);
-		this.layer.setPosition(200, 200);
+		this.select(false);
 	};
 	public setHeight = (HEIGHT: number) => {
-		const ratio = HEIGHT / this.layer.getHeight() * 0.95;
+		const ratio = HEIGHT / this.layer.getHeight();
 		this.layer.scale(ratio, ratio, this.WIDTH / 2, this.HEIGHT / 2);
 	};
+	public boardSetPosition = (x: number, y: number) => {
+		this.layer.setPosition(x * this.WIDTH, y * this.HEIGHT);
+	};
 	public setPosition = (x: number, y: number) => {
-		const marginX = (this.WIDTH - this.layer.getWidth()) / 2;
-		const marginY = (this.HEIGHT - this.layer.getHeight()) / 2 * 0.8;
-		this.layer.setPosition(marginX + x * this.WIDTH, marginY + y * this.HEIGHT);
+		this.layer.setPosition(x, y);
+	};
+	public select = (flag: boolean) => {
+		this.backLayer.visible(flag);
+	};
+	public setClickListener = (func) => {
+		this.layer.listen('click', (_e) => {
+			func();
+		});
 	};
 };
 

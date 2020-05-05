@@ -42,7 +42,7 @@ db.ref(PATH + 'player/name').on('value', (res) => {
 	Player.drawName(res.val());
 });
 
-db.ref(PATH + 'player/point').on('value', (res) => {
+db.ref(PATH + 'player/point/val').on('value', (res) => {
 	Player.drawPoint(res.val());
 });
 

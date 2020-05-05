@@ -1,13 +1,15 @@
 export class CreateGoal {
 	private layer;
+	private robotLayer;
 	private backLayer;
 	private textLayer;
 	constructor(private WIDTH, private HEIGHT, private stage) {
-		this.backLayer = stage.layer().rect(0, 0, WIDTH, HEIGHT);
-		this.backLayer.fill("red");
 		this.layer = stage.layer();
-		this.layer.zIndex(0);
-		const colorLayer = this.layer.layer();
+		// 背景
+		this.backLayer = this.layer.rect(-180, -80, 360, 360);
+		// ロボット本体
+		this.robotLayer = this.layer.layer();
+		const colorLayer = this.robotLayer.layer();
 		const bb = colorLayer.layer();
 		bb.attr("stroke-width", "14.4");
 		bb.ellipse(0, 41, 91, 84).fill("white").attr("stroke", "#FFF");
@@ -32,27 +34,27 @@ export class CreateGoal {
 		c.path().attr("d", "m-95 44.5h190").attr("stroke", "#FFF");
 		c.circle(-42, 0, 4).attr("stroke", "#FFF");
 		c.circle(42, 0, 4).attr("stroke", "#FFF");
+		// ID
 		this.textLayer = this.layer.text();
-		this.textLayer.zIndex(1);
-		this.textLayer.text((0).toString());
+		this.textLayer.text(String(1));
 		this.textLayer.fontSize(180);
 		this.textLayer.setPosition(-55, 10);
 		this.textLayer.color("black");
 		this.setHeight(HEIGHT);
 	};
 	public setHeight = (HEIGHT: number) => {
-		const ratio = HEIGHT / this.layer.getHeight() * 0.95;
+		const ratio = HEIGHT / this.layer.getHeight();
 		this.layer.scale(ratio, ratio, this.WIDTH / 2, this.HEIGHT / 2);
 	};
 	public setPosition = (x: number, y: number) => {
-		const marginX = (this.WIDTH - this.layer.getWidth()) / 2;
-		const marginY = (this.HEIGHT - this.layer.getHeight()) / 2 * 0.8;
-		this.layer.setPosition(marginX + x * this.WIDTH, marginY + y * this.HEIGHT);
-		this.backLayer.setPosition(x * this.WIDTH, y * this.HEIGHT);
+		this.layer.setPosition(x * this.WIDTH, y * this.HEIGHT);
 	};
 	public changeColor = (id: number, color: string) => {
-		this.textLayer.text(id.toString());
+		this.textLayer.text(String(id + 1));
 		this.backLayer.fill(color);
+	};
+	public zIndex = (z: number) => {
+		this.layer.zIndex(z);
 	};
 };
 

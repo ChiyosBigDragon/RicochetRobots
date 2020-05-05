@@ -222,6 +222,7 @@ function commandReset() {
 }
 
 function resetBoard() {
+	// ここ最悪，元の位置にかぶると消滅する
 	for(let i = 0; i < ROBOT_NUM; ++i) {
 		Robot[i].moveOnce(Robot[i].startY, Robot[i].startX);
 	}
