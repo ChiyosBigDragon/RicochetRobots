@@ -6,9 +6,8 @@ export class Server {
 	private wallX;
 	private wallY;
 	constructor(private uid: string, private userName: string) {}
-	public select = (robot_id) => {
-		db.ref(PATH + 'select').set(robot_id);
-		return true;
+	public select = (robot_id: number) => {
+		return db.ref(PATH + 'select').set(robot_id);
 	};
 	private moveRecover = (robot, move) => {
 		const ROBOT_NUM = robot.length - 1;
@@ -138,6 +137,32 @@ export class Server {
 		this.voteReset();
 		this.stepReset();
 		this.goalChange();
+	};
+	public vote = (step: number) => {
+		db.ref(PATH + 'vote/').once('value', (res) => {
+			const before = res.val();
+			const v = new Array();
+			for(const key in before) {
+				const obj = before[key];
+				obj.uid = key;
+				v.push(obj);
+			}
+			v.sort((lhs, rhs) => {
+				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+			});
+			const beforeTop = v[0].uid;
+			v.push({uid: this.uid, name: this.userName, step: step, time: new Date()});
+			v.sort((lhs, rhs) => {
+				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+			});
+			const afterTop = v[0].uid;
+			if(beforeTop != afterTop) {
+				const date = new Date();
+				date.setSeconds(date.getSeconds() + 32);
+				db.ref(PATH + 'voteLimitTime/').update({uid: this.uid, time: date});
+			}
+			db.ref(PATH + 'vote/' + this.uid).update({name: this.userName, step: step, time: new Date()});
+		});
 	};
 	private voteReset = () => {
 		db.ref(PATH + 'vote/').set({});

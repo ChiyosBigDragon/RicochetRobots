@@ -8,14 +8,19 @@ export class DrawScore {
 	private announce: any;
 	private voteContainer;
 	private scoreContainer;
+	private timerContainer;
+	private timerID;
 	constructor(/*private HEIGHT: number,*/ private container: HTMLElement) {
 		// container.style.height = this.HEIGHT.toString() + "px";
 		this.voteContainer = document.createElement("div");
 		this.setVoteListener();
 		this.scoreContainer = document.createElement("div");
 		this.setScoreListener();
+		this.timerContainer = document.createElement("div");
+		this.setTimerListener();
 		container.appendChild(this.voteContainer);
 		container.appendChild(this.scoreContainer);
+		container.appendChild(this.timerContainer);
 	}
 	private setVoteListener = () => {
 		db.ref(PATH + 'vote').on('value', (res) => {
@@ -30,7 +35,6 @@ export class DrawScore {
 			});
 			for(const e of v) {
 				if(e.step == 1000) continue;
-				console.log(e.step);
 				const textBox = document.createElement("div");
 				textBox.className = "announce-text";
 				const date = new Date(e.time);
@@ -62,5 +66,22 @@ export class DrawScore {
 				this.scoreContainer.appendChild(textBox);
 			}
 		});
+	};
+	private setTimerListener = () => {
+		db.ref(PATH + 'voteLimitTime').on('value', (res) => {
+			clearInterval(this.timerID);
+			const time = new Date(res.val().time);
+			this.timerID = setInterval(this.countDown, 500, time);
+		});
+	}
+	private countDown = (endTime) => {
+		const now = new Date();
+		const s = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+		if(s <= 0) {
+			clearInterval(this.timerID);
+			this.timerContainer.innerText = `${String(0).padStart(2, "0")}`;
+			return;
+		}
+		this.timerContainer.innerText = `${String(s).padStart(2, "0")}`;
 	};
 };

@@ -67,7 +67,7 @@ const randomName = (min = 4, max = 6) => {
 
 	db.ref(PATH + 'robot').on('value', (res) => {
 		board.robot(res.val());
-		// command.robot(res.val());
+		command.robot(res.val());
 	});
 
 	db.ref(PATH + 'select').on('value', (res) => {

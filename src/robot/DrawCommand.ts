@@ -33,7 +33,7 @@ export class DrawCommand {
 			this.robotsLayer[i] = new CreateRobot(i + 1, this.ROBOT_COLOR[i], this.ROBOT_WIDTH, this.ROBOT_WIDTH, this.robotLayer);
 			this.robotsLayer[i].setPosition(this.ROBOT_WIDTH * i, this.container.clientHeight - 85);
 			this.robotsLayer[i].setClickListener(() => {
-				this.select(i);
+				this.server.select(i);
 			});
 		}
 		this.panelLayer = this.robotLayer.rect(43, 0, 234, 234);
@@ -67,12 +67,6 @@ export class DrawCommand {
 			this.robotsLayer[i].select(robot[i].select);
 		}
 	};
-	public select = (robot_id) => {
-		this.server.select(robot_id);
-	};
-	public move = (dir) => {
-		this.server.move(dir);
-	};
 	private addStep = (num) => {
 		if(this.step * 10 + num >= 100) return false;
 		this.step = this.step * 10 + num;
@@ -89,7 +83,8 @@ export class DrawCommand {
 	};
 	private vote = () => {
 		if(this.step <= 0) return false;
-		db.ref(PATH + 'vote/' + this.uid).update({name: this.userName, step: this.step, time: new Date()});
+		if(this.step >= 100) return false;
+		this.server.vote(this.step);
 		this.step = 0;
 		this.stepText.text(String(this.step).padStart(2, "0"));
 		return true;
@@ -111,16 +106,16 @@ export class DrawCommand {
 			if(!this.keyAvailable) return false;
 			this.keyAvailable = false;
 			if(event.key === 'ArrowRight') {
-				this.move(0);
+				this.server.move(0);
 			}
 			if(event.key === 'ArrowDown') {
-				this.move(1);
+				this.server.move(1);
 			}
 			if(event.key === 'ArrowLeft') {
-				this.move(2);
+				this.server.move(2);
 			}
 			if(event.key === 'ArrowUp') {
-				this.move(3);
+				this.server.move(3);
 			}
 			if(event.key === 'r') {
 				this.server.reset();
@@ -129,16 +124,16 @@ export class DrawCommand {
 				this.server.removeOnce();
 			}
 			if(event.key === '1') {
-				this.select(0);
+				this.server.select(0);
 			}
 			if(event.key === '2') {
-				this.select(1);
+				this.server.select(1);
 			}
 			if(event.key === '3') {
-				this.select(2);
+				this.server.select(2);
 			}
 			if(event.key === '4') {
-				this.select(3);
+				this.server.select(3);
 			}
 			if(event.key === 't') {
 				this.toggle();
