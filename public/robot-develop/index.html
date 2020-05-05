@@ -32,7 +32,7 @@
 				width: 320px;
 				height: 640px;
 			}
-			#rank-container {
+			#info-container {
 				top: 0;
 				width: 320px;
 				height: 320px;
@@ -64,55 +64,10 @@
 		<div id='base-container'>
 			<div id='board-container'></div>
 			<div id='side-container'>
-				<div id='rank-container'></div>
+				<div id='info-container'></div>
 				<div id='command-container'></div>
 			</div>
-		</div>
-		<div id='button'>
-			<div>
-				0~2が指定できます．
-			</div>
-			<div>
-				<input id='stage' type='number' value='0' min='0' max='2' step='1'>
-				<button onclick="gameInit()">ステージ読み込み</button>
-			</div>
-			()内はキー
-			<div>
-				<button onclick="init()">init</button>
-				<button onclick="goalInit()">ゴール変更(C)</button>
-			</div>
-			<div>
-				<button onclick="commandReset()">手数リセット(R)</button>
-				<button onclick="countDecrement()">-1(5)</button>
-			</div>
-			<!-- <div>
-				<button onclick="submit()">そうしん</button>
-			</div> -->
-			<!-- <div>
-				<script language="JavaScript" type="text/javascript" src="http://stopwatchtimer.pya.jp/timer_blogparts.js"></script>
-			</div> -->
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
-			<div>
-				<input></input><input name='number' id='number' type='number' value='0' min='0' max='1000' step='1'>
-			</div>
 		</div>	
-		<script defer="" src='./src/script/Client.main.js'></script>
+		<script defer="" src='./src/script/Client.js'></script>
 	</body>
 </html>
