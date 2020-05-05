@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>PlayCamelUp</title>
+		<script defer src="/__/firebase/6.4.0/firebase-app.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-auth.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-database.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-messaging.js"></script>
+		<script defer src="/__/firebase/6.4.0/firebase-storage.js"></script>
+		<script defer src="/__/firebase/init.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+		<script src="https://cdn.anychart.com/releases/8.7.1/js/graphics.min.js"></script>
+		<style>
+			body {
+				background-color: rgba(247, 255, 58, 0.5);
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23bb9c11' fill-opacity='0.15' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
+			}
+			#stage-container {
+				/* position: relative; */
+				background-color: white;
+				display: flex;
+				flex-direction: column;
+				width: 1080px;
+				/* height: 720px; */
+				margin: 10px auto;
+			}
+			#player-container {
+				margin: 10px auto;
+				display: flex;
+				flex-direction: row;
+			}
+			#player-left-container {
+				margin: 10px auto;
+				display: flex;
+				flex-direction: column;
+			}
+			.status-player {
+				border-left: 5px solid red;
+				display: flex;
+				height: 40px;
+				/* justify-content: space-between; */
+			}
+			.status-player-name {
+				margin: auto 10px;
+				flex-shrink: 0;
+				flex-direction: row;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.status-player-point {
+				margin: auto 10px;
+				width: 58px;
+				text-align: right;
+				flex-shrink: 0;
+				flex-direction: row;
+			}
+			.status-player-goods-container {
+				margin: auto 10px;
+				/* flex: 1; */
+				flex-shrink: 1;
+				display: flex;
+				white-space: nowrap;
+				/* display: flex; */
+				height: 100%;
+				overflow: auto;
+				overflow-x: scroll;
+  				scrollbar-width: none;
+				/* width: 60%; */
+				/* flex-direction: row;
+				justify-content: flex-start; */
+			}
+			.status-player-goods {
+				/* display: inline-block; */
+				/* float: left; */
+				height: 80%;
+				min-width: max-content;
+				margin: auto 1px;
+			}
+			.announce-container {
+				margin: auto 10px;
+				/* flex: 1; */
+				flex-shrink: 1;
+				display: flex;
+				/* white-space: nowrap; */
+				/* display: flex; */
+				height: 100%;
+				overflow: auto;
+				overflow-y: scroll;
+  				scrollbar-width: thin;
+				/* width: 60%; */
+				flex-direction: column;
+				/* justify-content: flex-start; */
+			}
+			/* .header-container {
+				display: flex;
+				justify-content: space-between;
+			}
+			.header-container .header-item {
+				width: 30%;
+			} */
+		</style>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLYN70ZWRG"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-JLYN70ZWRG');
+		</script> -->
+	</head>
+	<body>
+		<div id="stage-container"></div>
+		<script defer="" src='./src/script/Client.js'></script>
+		<!-- <script>
+			var stage = anychart.graphics.create('stage-container');
+			stage.rect(0, 0, 1080, 720);
+			stage.circle(177.5, 205, 100);
+		</script> -->
+		<!-- <div id="aaa">
+			背景：SVGBackgrounds.com CC BY 4.0<br>
+		</div> -->
+	</body>
+</html>
+
