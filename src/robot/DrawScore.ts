@@ -27,14 +27,14 @@ export class DrawScore {
 		this.setTimerListener();
 	}
 	private setVoteListener = () => {
-		db.ref(PATH + 'vote').on('value', (res) => {
+		db.ref(PATH + 'vote').on('value', async (res) => {
 			while(this.voteTextContainer.firstChild) this.voteTextContainer.removeChild(this.voteTextContainer.firstChild);
 			const obj = res.val();
 			const v = new Array();
 			for(const key in obj) {
 				v.push(obj[key]);
 			}
-			v.sort((lhs, rhs) => {
+			await this.sort(v, (lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -55,14 +55,14 @@ export class DrawScore {
 		});
 	};
 	private setScoreListener = () => {
-		db.ref(PATH + 'score').on('value', (res) => {
+		db.ref(PATH + 'score').on('value', async (res) => {
 			while(this.scoreTextContainer.firstChild) this.scoreTextContainer.removeChild(this.scoreTextContainer.firstChild);
 			const obj = res.val();
 			const v = new Array();
 			for(const key in obj) {
 				v.push(obj[key]);
 			}
-			v.sort((lhs, rhs) => {
+			await this.sort(v, (lhs, rhs) => {
 				if(lhs.pt < rhs.pt) return 1;
 				return -1;
 			});
@@ -91,5 +91,10 @@ export class DrawScore {
 			return;
 		}
 		this.timerContainer.innerText = `残り時間：${String(s).padStart(2, "0")}`;
+	};
+	private sort = (v, cmp) => {
+		return new Promise((res, _rej) => {
+			v.sort(cmp);
+		});
 	};
 };

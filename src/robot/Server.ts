@@ -141,7 +141,7 @@ export class Server {
 		db.ref(PATH + 'announce/').set("投票受付中");
 	};
 	public voteEnd = () => {
-		db.ref(PATH + 'vote/').once('value', (res) => {
+		db.ref(PATH + 'vote/').once('value', async (res) => {
 			const vote = res.val();
 			if(vote == null) {
 				db.ref(PATH + 'mode/' + this.uid).set('vote');
@@ -154,7 +154,7 @@ export class Server {
 				obj.uid = key;
 				v.push(obj);
 			}
-			v.sort((lhs, rhs) => {
+			await this.sort(v, (lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -169,7 +169,7 @@ export class Server {
 		});
 	};
 	public vote = (step: number) => {
-		db.ref(PATH + 'vote/').once('value', (res) => {
+		db.ref(PATH + 'vote/').once('value', async (res) => {
 			const before = res.val();
 			if(before == null) {
 				db.ref(PATH + 'vote/' + this.uid).update({name: this.userName, step: step, time: new Date()});
@@ -184,14 +184,14 @@ export class Server {
 				obj.uid = key;
 				v.push(obj);
 			}
-			v.sort((lhs, rhs) => {
+			await this.sort(v, (lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
 			});
 			const beforeTop = v[0].uid;
 			v.push({uid: this.uid, name: this.userName, step: step, time: new Date()});
-			v.sort((lhs, rhs) => {
+			await this.sort(v, (lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -210,7 +210,7 @@ export class Server {
 		db.ref(PATH + 'vote/' + this.uid).set({});
 		db.ref(PATH + 'mode/' + this.uid).set('vote');
 		db.ref(PATH + 'announce/').set(`${this.userName}がリタイアしました`);
-		db.ref(PATH + 'vote/').once('value', (res) => {
+		db.ref(PATH + 'vote/').once('value', async (res) => {
 			const vote = res.val();
 			if(vote == null) {
 				db.ref(PATH + 'announce/').set("投票受付中");
@@ -222,7 +222,7 @@ export class Server {
 				obj.uid = key;
 				v.push(obj);
 			}
-			v.sort((lhs, rhs) => {
+			await this.sort(v, (lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -275,6 +275,11 @@ export class Server {
 				db.ref(PATH + 'robot').set(robot);
 				db.ref(PATH + 'baseRobot').set(robot);
 			});
+		});
+	};
+	private sort = (v, cmp) => {
+		return new Promise((res, _rej) => {
+			v.sort(cmp);
 		});
 	};
 };
