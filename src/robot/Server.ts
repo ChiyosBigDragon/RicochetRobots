@@ -154,7 +154,7 @@ export class Server {
 				obj.uid = key;
 				v.push(obj);
 			}
-			await this.sort(v, (lhs, rhs) => {
+			v.sort((lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -184,14 +184,14 @@ export class Server {
 				obj.uid = key;
 				v.push(obj);
 			}
-			await this.sort(v, (lhs, rhs) => {
+			v.sort((lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
 			});
 			const beforeTop = v[0].uid;
 			v.push({uid: this.uid, name: this.userName, step: step, time: new Date()});
-			await this.sort(v, (lhs, rhs) => {
+			v.sort((lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -222,7 +222,7 @@ export class Server {
 				obj.uid = key;
 				v.push(obj);
 			}
-			await this.sort(v, (lhs, rhs) => {
+			v.sort((lhs, rhs) => {
 				if(lhs.step > rhs.step) return 1;
 				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
 				return -1;
@@ -275,11 +275,6 @@ export class Server {
 				db.ref(PATH + 'robot').set(robot);
 				db.ref(PATH + 'baseRobot').set(robot);
 			});
-		});
-	};
-	private sort = (v, cmp) => {
-		return new Promise((res, _rej) => {
-			v.sort(cmp);
 		});
 	};
 };
