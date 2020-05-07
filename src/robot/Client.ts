@@ -58,6 +58,7 @@ const randomName = (min = 4, max = 6) => {
 			server.voteReset();
 			db.ref(PATH + 'mode/').set({});
 			db.ref(PATH + 'score/').set({});
+			db.ref(PATH + 'announce/').set("投票受付中");
 		};
 		document.getElementById('button-score-reset').onclick = () => {
 			server.voteReset();
@@ -68,12 +69,15 @@ const randomName = (min = 4, max = 6) => {
 				}
 				db.ref(PATH + 'score/').set(obj);
 			});
+			db.ref(PATH + 'announce/').set("投票受付中");
 		};
 		document.getElementById('button-vote-reset').onclick = () => {
 			server.voteReset();
+			db.ref(PATH + 'announce/').set("投票受付中");
 		};
 		document.getElementById('button-goal-change').onclick = () => {
 			server.goalChange();
+			db.ref(PATH + 'announce/').set("投票受付中");
 		};
 	}
 	// reset
