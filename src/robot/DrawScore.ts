@@ -35,7 +35,9 @@ export class DrawScore {
 				v.push(obj[key]);
 			}
 			v.sort((lhs, rhs) => {
-				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+				if(lhs.step > rhs.step) return 1;
+				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
+				return -1;
 			});
 			for(const e of v) {
 				if(e.step == 1000) continue;
@@ -61,7 +63,8 @@ export class DrawScore {
 				v.push(obj[key]);
 			}
 			v.sort((lhs, rhs) => {
-				return (Number)(lhs.pt < rhs.pt);
+				if(lhs.pt < rhs.pt) return 1;
+				return -1;
 			});
 			for(const e of v) {
 				const textBox = document.createElement("div");

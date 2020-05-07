@@ -155,7 +155,9 @@ export class Server {
 				v.push(obj);
 			}
 			v.sort((lhs, rhs) => {
-				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+				if(lhs.step > rhs.step) return 1;
+				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
+				return -1;
 			});
 			const top = v[0].uid;
 			if(top == this.uid) {
@@ -183,12 +185,16 @@ export class Server {
 				v.push(obj);
 			}
 			v.sort((lhs, rhs) => {
-				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+				if(lhs.step > rhs.step) return 1;
+				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
+				return -1;
 			});
 			const beforeTop = v[0].uid;
 			v.push({uid: this.uid, name: this.userName, step: step, time: new Date()});
 			v.sort((lhs, rhs) => {
-				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+				if(lhs.step > rhs.step) return 1;
+				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
+				return -1;
 			});
 			const afterTop = v[0].uid;
 			if(beforeTop != afterTop) {
@@ -217,7 +223,9 @@ export class Server {
 				v.push(obj);
 			}
 			v.sort((lhs, rhs) => {
-				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+				if(lhs.step > rhs.step) return 1;
+				if(lhs.step == rhs.step && lhs.time > rhs.time) return 1;
+				return -1;
 			});
 			const top = v[0].uid;
 			db.ref(PATH + 'announce/').set(`${v[0].name}の番です`);
