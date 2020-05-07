@@ -231,6 +231,7 @@ export class Server {
 			for(const key in obj) {
 				obj[key] = "vote";
 			}
+			db.ref(PATH + 'mode/').set(obj);
 		});
 	};
 	private stepReset = () => {

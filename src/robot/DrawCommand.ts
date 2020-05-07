@@ -154,9 +154,9 @@ export class DrawCommand {
 			if(event.key === '4') {
 				this.server.select(3);
 			}
-			if(event.key === 't') {
-				this.toggle();
-			}
+			// if(event.key === 't') {
+			// 	this.toggle();
+			// }
 			this.keyAvailable = true;
 			return true;
 		};
@@ -181,9 +181,9 @@ export class DrawCommand {
 			if(event.key === 'Enter') {
 				this.vote();
 			}
-			if(event.key === 't') {
-				this.toggle();
-			}
+			// if(event.key === 't') {
+			// 	this.toggle();
+			// }
 		};
 	};
 };
