@@ -36,7 +36,12 @@ export class DrawCommand {
 				this.server.select(i);
 			});
 		}
-		this.panelLayer = this.robotLayer.rect(43, 0, 234, 234);
+		this.panelLayer = this.robotLayer.layer();
+		this.panelLayer.rect(43, 0, 234, 234);
+		this.panelLayer.text(43, 0, "りたいあ", {fontSize: '48px', color: '#000'});
+		this.panelLayer.listen('click', (_e) => {
+			this.server.retire();
+		});
 	};
 	private createKeypad = (stage) => {
 		this.keypadLayer = stage.layer();
@@ -62,9 +67,9 @@ export class DrawCommand {
 		this.keypadLayer.circle(2 * width + width / 2, 3 * height + height / 2, width / 2 * 0.9);
 		this.keypadLayer.circle(3 * width + width / 2, 3 * height + height / 2, width / 2 * 0.9);
 	};
-	public robot = (robot) => {
+	public select = (robot_id) => {
 		for(let i = 0; i < this.ROBOT_NUM; ++i) {
-			this.robotsLayer[i].select(robot[i].select);
+			this.robotsLayer[i].select(i == robot_id);
 		}
 	};
 	private addStep = (num) => {
@@ -94,6 +99,20 @@ export class DrawCommand {
 		this.setKeypadListener(!this.keypadLayer.visible());
 		this.robotLayer.visible(!this.robotLayer.visible());
 		this.keypadLayer.visible(!this.keypadLayer.visible());
+	};
+	public mode = (str: string) => {
+		this.setRobotListener(false);
+		this.setKeypadListener(false);
+		this.robotLayer.visible(false);
+		this.keypadLayer.visible(false);
+		if(str == 'vote') {
+			this.setKeypadListener(true);
+			this.keypadLayer.visible(true);
+		}
+		if(str == 'move') {
+			this.setRobotListener(true);
+			this.robotLayer.visible(true);
+		}
 	};
 	public setRobotListener = (flag: boolean) => {
 		if(!flag) return;

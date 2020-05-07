@@ -95,7 +95,7 @@ export class Server {
 					await db.ref(PATH + 'vote/' + this.uid).once('value', (voteSnapshot) => {
 						step = voteSnapshot.val().step;
 					});
-					if(step <= trueStep) {
+					if(trueStep <= step) {
 						this.clear();
 					}
 				}
@@ -129,18 +129,53 @@ export class Server {
 		});
 	};
 	private clear = () => {
+		db.ref(PATH + 'announce/').set(`${this.userName} win!`);
 		db.ref(PATH + 'score/' + this.uid).once('value', (scoreSnapshot) => {
 			const obj = scoreSnapshot.val();
 			obj.pt += 1;
 			db.ref(PATH + 'score/' + this.uid).set(obj);
+			db.ref(PATH + 'announce/').set(`${this.userName}: ${obj.pt}pt → ${obj.pt + 1}pt`);
 		});
-		this.voteReset();
-		this.stepReset();
+		db.ref(PATH + 'mode/' + this.uid).set('vote');
 		this.goalChange();
+		db.ref(PATH + 'announce/').set("投票受付中");
+	};
+	public voteEnd = () => {
+		db.ref(PATH + 'vote/').once('value', (res) => {
+			const vote = res.val();
+			if(vote == null) {
+				db.ref(PATH + 'mode/' + this.uid).set('vote');
+				db.ref(PATH + 'announce/').set("投票受付中");
+				return;				
+			}
+			const v = new Array();
+			for(const key in vote) {
+				const obj = vote[key];
+				obj.uid = key;
+				v.push(obj);
+			}
+			v.sort((lhs, rhs) => {
+				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+			});
+			const top = v[0].uid;
+			if(top == this.uid) {
+				db.ref(PATH + 'mode/' + this.uid).set('move');
+				db.ref(PATH + 'announce/').set(`${this.userName}の番です`);
+			} else {
+				db.ref(PATH + 'mode/' + this.uid).set('vote');
+			}
+		});
 	};
 	public vote = (step: number) => {
 		db.ref(PATH + 'vote/').once('value', (res) => {
 			const before = res.val();
+			if(before == null) {
+				db.ref(PATH + 'vote/' + this.uid).update({name: this.userName, step: step, time: new Date()});
+				const date = new Date();
+				date.setSeconds(date.getSeconds() + 32);
+				db.ref(PATH + 'voteLimitTime/').update({uid: this.uid, time: date});
+				return;
+			}
 			const v = new Array();
 			for(const key in before) {
 				const obj = before[key];
@@ -164,14 +199,47 @@ export class Server {
 			db.ref(PATH + 'vote/' + this.uid).update({name: this.userName, step: step, time: new Date()});
 		});
 	};
-	private voteReset = () => {
+	public retire = () => {
+		this.reset();
+		db.ref(PATH + 'vote/' + this.uid).set({});
+		db.ref(PATH + 'mode/' + this.uid).set('vote');
+		db.ref(PATH + 'announce/').set(`${this.userName}がリタイアしました`);
+		db.ref(PATH + 'vote/').once('value', (res) => {
+			const vote = res.val();
+			if(vote == null) {
+				db.ref(PATH + 'announce/').set("投票受付中");
+				return;
+			}
+			const v = new Array();
+			for(const key in vote) {
+				const obj = vote[key];
+				obj.uid = key;
+				v.push(obj);
+			}
+			v.sort((lhs, rhs) => {
+				return (Number)((lhs.step > rhs.step) || (lhs.step == rhs.step && lhs.time > rhs.time));
+			});
+			const top = v[0].uid;
+			db.ref(PATH + 'announce/').set(`${v[0].name}の番です`);
+			db.ref(PATH + 'mode/' + top).set('move');
+		});
+	};
+	public voteReset = () => {
 		db.ref(PATH + 'vote/').set({});
+		db.ref(PATH + 'mode/').once('value', (res) => {
+			const obj = res.val();
+			for(const key in obj) {
+				obj[key] = "vote";
+			}
+		});
 	};
 	private stepReset = () => {
 		db.ref(PATH + 'moveStr/').set("");
 		db.ref(PATH + 'step/').set(0);
 	};
-	private goalChange = () => {
+	public goalChange = () => {
+		this.voteReset();
+		this.stepReset();
 		db.ref(PATH + 'robot').once('value', async (res) => {
 			// スタート位置記憶
 			const robot = res.val();
