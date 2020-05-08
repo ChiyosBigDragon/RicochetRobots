@@ -22,11 +22,12 @@ const randomName = (min = 4, max = 6) => {
 
 (async () => {
 	const userName = (() => {
-		const defaultName = randomName(4, 6);
-		let userName = window.prompt("User Name?", defaultName);
+		const cookieName = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+		let userName = window.prompt("User Name?", cookieName);
 		if(userName == "" || userName == null){
-			userName = defaultName;
+			userName = randomName(4, 6);
 		}
+		document.cookie = `name=${userName}`;
 		return userName;
 	})();
 	await firebase.auth().signInAnonymously().catch((error) => {
