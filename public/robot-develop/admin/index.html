@@ -43,8 +43,16 @@
 				height: 320px;
 				background: rgba(0, 0, 255, 0.1);
 			}
+			#announce-container {
+				font-size: 24px;
+			}
 			#timer-container {
 				font-size: 24px;
+			}
+			#scroll-container {
+				overflow-y: scroll;
+				scrollbar-width: none;
+				height: 249px;
 			}
 			.element-text {
 				margin-left: 36px;
@@ -80,13 +88,15 @@
 			<div id='side-container'>
 				<div id='info-container'>
 					<div id='announce-container'></div>
-					<div id='vote-container'>
-						<div id='vote-title'><b>Vote</b></div>
-					</div>
-					<div id='score-container'>
-						<div id='score-title'><b>Score</b></div>
-					</div>
 					<div id='timer-container'></div>
+					<div id='scroll-container'>
+						<div id='vote-container'>
+							<div id='vote-title'><b>Vote</b></div>
+						</div>
+						<div id='score-container'>
+							<div id='score-title'><b>Score</b></div>
+						</div>
+					</div>
 				</div>
 				<div id='command-container'></div>
 			</div>
