@@ -14,8 +14,8 @@
     "anychart": "^8.7.1",
     "express": "^4.17.1",
     "firebase": "^7.14.2",
-    "firebase-admin": "^8.11.0",
-    "firebase-functions": "^3.6.1",
+    "firebase-admin": "^11.4.1",
+    "firebase-functions": "^3.24.1",
     "google-gax": "^2.3.1",
     "retry-request": "^4.1.1",
     "webpack-node-externals": "^1.7.2"
